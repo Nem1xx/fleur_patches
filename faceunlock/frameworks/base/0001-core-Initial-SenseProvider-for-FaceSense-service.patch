@@ -1,12 +1,13 @@
-From 323cd7a43af06bca7edb3197fe9522001232ee74 Mon Sep 17 00:00:00 2001
+From 541b6c57fa029507d8d5001c67b8529eb0364782 Mon Sep 17 00:00:00 2001
 From: Chris Crump <chriscrawford893@gmail.com>
 Date: Tue, 1 Nov 2022 17:27:48 -0400
-Subject: [PATCH 2/3] core: Initial SenseProvider for FaceSense service
+Subject: [PATCH 2/2] core: Initial SenseProvider for FaceSense service
 
 SenseProvider is a custom provider that connects and listens to FaceSense, the service responsible for face unlock on a device.
 
 The provider is loosely based on Android's HIDL provider but instead of using a HAL, we use our own service to handle face data
 
+Change-Id: I1b83429a793a50fba292a38dbf5aa8a54ae5ace3
 [ghostrider-reborn: rename prop to ro.face.sense_service.enabled]
 Signed-off-by: Adithya R <gh0strider.2k18.reborn@gmail.com>
 ---
@@ -45,7 +46,7 @@ Signed-off-by: Adithya R <gh0strider.2k18.reborn@gmail.com>
  create mode 100644 services/core/java/com/android/server/biometrics/sensors/face/sense/TestHal.java
 
 diff --git a/services/core/Android.bp b/services/core/Android.bp
-index faf7da35813a4..6079bb764a73a 100644
+index faf7da35813a..6079bb764a73 100644
 --- a/services/core/Android.bp
 +++ b/services/core/Android.bp
 @@ -174,6 +174,7 @@ java_library_static {
@@ -57,7 +58,7 @@ index faf7da35813a4..6079bb764a73a 100644
      javac_shard_size: 50,
  }
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java b/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java
-index 5491379b39ace..398301f2f8198 100644
+index 5491379b39ac..398301f2f819 100644
 --- a/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java
 @@ -26,6 +26,7 @@ import android.annotation.Nullable;
@@ -118,7 +119,7 @@ index 5491379b39ace..398301f2f8198 100644
                          ServiceManager.getService(Context.BIOMETRIC_SERVICE));
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/BiometricTestSessionImpl.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/BiometricTestSessionImpl.java
 new file mode 100644
-index 0000000000000..52932539329fa
+index 000000000000..52932539329f
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/BiometricTestSessionImpl.java
 @@ -0,0 +1,211 @@
@@ -335,7 +336,7 @@ index 0000000000000..52932539329fa
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceAuthenticationClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceAuthenticationClient.java
 new file mode 100644
-index 0000000000000..c1c795fa4a911
+index 000000000000..c1c795fa4a91
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceAuthenticationClient.java
 @@ -0,0 +1,202 @@
@@ -543,7 +544,7 @@ index 0000000000000..c1c795fa4a911
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceEnrollClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceEnrollClient.java
 new file mode 100644
-index 0000000000000..060ef4fc83462
+index 000000000000..060ef4fc8346
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceEnrollClient.java
 @@ -0,0 +1,132 @@
@@ -681,7 +682,7 @@ index 0000000000000..060ef4fc83462
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceGenerateChallengeClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceGenerateChallengeClient.java
 new file mode 100644
-index 0000000000000..ef8af9b4a0ec5
+index 000000000000..ef8af9b4a0ec
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceGenerateChallengeClient.java
 @@ -0,0 +1,111 @@
@@ -798,7 +799,7 @@ index 0000000000000..ef8af9b4a0ec5
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceGetFeatureClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceGetFeatureClient.java
 new file mode 100644
-index 0000000000000..aca36f436306a
+index 000000000000..aca36f436306
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceGetFeatureClient.java
 @@ -0,0 +1,101 @@
@@ -905,7 +906,7 @@ index 0000000000000..aca36f436306a
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceInternalCleanupClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceInternalCleanupClient.java
 new file mode 100644
-index 0000000000000..c25cd70925f23
+index 000000000000..c25cd70925f2
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceInternalCleanupClient.java
 @@ -0,0 +1,70 @@
@@ -981,7 +982,7 @@ index 0000000000000..c25cd70925f23
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceInternalEnumerateClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceInternalEnumerateClient.java
 new file mode 100644
-index 0000000000000..b634245ae7c6e
+index 000000000000..b634245ae7c6
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceInternalEnumerateClient.java
 @@ -0,0 +1,58 @@
@@ -1045,7 +1046,7 @@ index 0000000000000..b634245ae7c6e
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceRemovalClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceRemovalClient.java
 new file mode 100644
-index 0000000000000..f93e4d7bfce17
+index 000000000000..f93e4d7bfce1
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceRemovalClient.java
 @@ -0,0 +1,63 @@
@@ -1114,7 +1115,7 @@ index 0000000000000..f93e4d7bfce17
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceResetLockoutClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceResetLockoutClient.java
 new file mode 100644
-index 0000000000000..c7a07d87e5957
+index 000000000000..c7a07d87e595
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceResetLockoutClient.java
 @@ -0,0 +1,82 @@
@@ -1202,7 +1203,7 @@ index 0000000000000..c7a07d87e5957
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceRevokeChallengeClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceRevokeChallengeClient.java
 new file mode 100644
-index 0000000000000..ffaa657ef48a5
+index 000000000000..ffaa657ef48a
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceRevokeChallengeClient.java
 @@ -0,0 +1,55 @@
@@ -1263,7 +1264,7 @@ index 0000000000000..ffaa657ef48a5
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceSetFeatureClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceSetFeatureClient.java
 new file mode 100644
-index 0000000000000..f52bcb0af1bc3
+index 000000000000..f52bcb0af1bc
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceSetFeatureClient.java
 @@ -0,0 +1,93 @@
@@ -1362,7 +1363,7 @@ index 0000000000000..f52bcb0af1bc3
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceUpdateActiveUserClient.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceUpdateActiveUserClient.java
 new file mode 100644
-index 0000000000000..165eb4383d30e
+index 000000000000..165eb4383d30
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/FaceUpdateActiveUserClient.java
 @@ -0,0 +1,84 @@
@@ -1452,7 +1453,7 @@ index 0000000000000..165eb4383d30e
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/SenseProvider.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/SenseProvider.java
 new file mode 100644
-index 0000000000000..f03040df53140
+index 000000000000..f03040df5314
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/SenseProvider.java
 @@ -0,0 +1,1086 @@
@@ -2544,7 +2545,7 @@ index 0000000000000..f03040df53140
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/SenseUtils.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/SenseUtils.java
 new file mode 100644
-index 0000000000000..52abf5476cd27
+index 000000000000..52abf5476cd2
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/SenseUtils.java
 @@ -0,0 +1,61 @@
@@ -2611,7 +2612,7 @@ index 0000000000000..52abf5476cd27
 +}
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/sense/TestHal.java b/services/core/java/com/android/server/biometrics/sensors/face/sense/TestHal.java
 new file mode 100644
-index 0000000000000..94995c5676a67
+index 000000000000..94995c5676a6
 --- /dev/null
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/sense/TestHal.java
 @@ -0,0 +1,144 @@
