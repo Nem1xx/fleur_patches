@@ -1,31 +1,31 @@
-From a88066cb1451edb42e75eb66d3b6b8a3dbcba9a6 Mon Sep 17 00:00:00 2001
+From 5ebad40de9f9dd54c9cd102db9b0a4b2da2685b7 Mon Sep 17 00:00:00 2001
 From: DarkJoker360 <simoespo159@gmail.com>
-Date: Fri, 31 Mar 2023 10:42:42 +0000
+Date: Wed, 20 Dec 2023 22:21:46 +0000
 Subject: [PATCH] Settings: Add a toggle to force LTE_CA
 
-Signed-off-by: DarkJoker360 <simoespo159@gmail.com>
 ---
- res/values/strings.xml                        |   3 +
+ res/values/strings.xml                        |   4 +
  res/xml/mobile_network_settings.xml           |   6 +
  .../ForceLteCaPreferenceController.java       | 159 ++++++++++++++++++
  .../telephony/MobileNetworkSettings.java      |   1 +
- 4 files changed, 169 insertions(+)
+ 4 files changed, 170 insertions(+)
  create mode 100644 src/com/android/settings/network/telephony/ForceLteCaPreferenceController.java
 
 diff --git a/res/values/strings.xml b/res/values/strings.xml
-index f693a9db0c8..9c0054b5584 100644
+index 0b45b85..91972eb 100644
 --- a/res/values/strings.xml
 +++ b/res/values/strings.xml
-@@ -14457,4 +14457,7 @@
-     <!-- [CHAR LIMIT=NONE] Hint for QR code process failure -->
-     <string name="bt_le_audio_qr_code_is_not_valid_format">QR code isn\u0027t a valid format</string>
- 
+@@ -14592,4 +14592,8 @@ To improve performance, you can set up Face Unlock again in Settings."</string>
+     <string name="security_settings_face_enroll_too_hot_message">Face Unlock setup can’t be completed because the phone is too hot. Try again later when the phone cools down.</string>
+     <string name="security_settings_face_enroll_too_hot_skip_face_unlock">Skip Face Unlock</string>
+     <string name="security_settings_face_enroll_too_hot_title">Phone is too hot</string>
++
 +    <!-- Force LTE_CA -->
 +    <string name="force_lte_ca">Force LTE CA</string>
 +    <string name="force_lte_ca_summary">Force LTE carrier aggregation to work</string>
  </resources>
 diff --git a/res/xml/mobile_network_settings.xml b/res/xml/mobile_network_settings.xml
-index 8fd6dc85d50..5c140ce5a09 100644
+index 8fd6dc8..5c140ce 100644
 --- a/res/xml/mobile_network_settings.xml
 +++ b/res/xml/mobile_network_settings.xml
 @@ -221,6 +221,12 @@
@@ -43,7 +43,7 @@ index 8fd6dc85d50..5c140ce5a09 100644
                  android:title="@string/choose_network_title"
 diff --git a/src/com/android/settings/network/telephony/ForceLteCaPreferenceController.java b/src/com/android/settings/network/telephony/ForceLteCaPreferenceController.java
 new file mode 100644
-index 00000000000..8eaaf1dac4d
+index 0000000..a5def49
 --- /dev/null
 +++ b/src/com/android/settings/network/telephony/ForceLteCaPreferenceController.java
 @@ -0,0 +1,159 @@
@@ -206,11 +206,12 @@ index 00000000000..8eaaf1dac4d
 +        }
 +    }
 +}
+\ No newline at end of file
 diff --git a/src/com/android/settings/network/telephony/MobileNetworkSettings.java b/src/com/android/settings/network/telephony/MobileNetworkSettings.java
-index 9601de1fd2e..b78f4cc3030 100644
+index 98add25..24cdeb4 100644
 --- a/src/com/android/settings/network/telephony/MobileNetworkSettings.java
 +++ b/src/com/android/settings/network/telephony/MobileNetworkSettings.java
-@@ -236,6 +236,7 @@ public void onAttach(Context context) {
+@@ -235,6 +235,7 @@ public class MobileNetworkSettings extends AbstractMobileNetworkSettings {
                  .addListener(videoCallingPreferenceController);
          use(ContactDiscoveryPreferenceController.class).init(getParentFragmentManager(), mSubId);
          use(NrAdvancedCallingPreferenceController.class).init(mSubId);
@@ -218,3 +219,6 @@ index 9601de1fd2e..b78f4cc3030 100644
      }
  
      @Override
+-- 
+2.43.0
+
