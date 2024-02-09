@@ -1,0 +1,50 @@
+From 475d063dfcabac769af700d0438b5df115b04b9b Mon Sep 17 00:00:00 2001
+From: Adithya R <gh0strider.2k18.reborn@gmail.com>
+Date: Thu, 26 Jan 2023 14:39:32 +0530
+Subject: [PATCH 2/2] init: Spoof build type property to user
+
+Also set ro.debuggable to 0. Avoids "root" detection in
+some banking-related apps whilst having the convenience
+of userdebug builds, such as adb root.
+
+Ensure to avoid this in eng build to keep necessary
+debugging intact.
+
+Change-Id: I78ec5abe4db8083c0e02157c0bcd1a3d99fb9a5d
+---
+ init/Android.bp           | 1 +
+ init/property_service.cpp | 6 ++++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/init/Android.bp b/init/Android.bp
+index 3df0e917c..6573fb505 100644
+--- a/init/Android.bp
++++ b/init/Android.bp
+@@ -150,6 +150,7 @@ libinit_cc_defaults {
+         },
+         eng: {
+             cppflags: [
++                "-DENG_BUILD",
+                 "-USHUTDOWN_ZERO_TIMEOUT",
+                 "-DSHUTDOWN_ZERO_TIMEOUT=1",
+             ],
+diff --git a/init/property_service.cpp b/init/property_service.cpp
+index 953d6e602..53fac7f42 100644
+--- a/init/property_service.cpp
++++ b/init/property_service.cpp
+@@ -1314,6 +1314,12 @@ static void SetSafetyNetProps() {
+     InitPropertySet("ro.boot.verifiedbootstate", "green");
+     InitPropertySet("ro.boot.veritymode", "enforcing");
+     InitPropertySet("ro.boot.vbmeta.device_state", "locked");
++
++#ifndef ENG_BUILD
++    // Spoof non-eng builds (such as userdebug) to user
++    InitPropertySet("ro.build.type", "user");
++    InitPropertySet("ro.debuggable", "0");
++#endif
+ }
+ 
+ void PropertyInit() {
+-- 
+2.43.0
+
